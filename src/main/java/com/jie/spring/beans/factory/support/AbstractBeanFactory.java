@@ -20,7 +20,12 @@ import com.jie.spring.beans.factory.config.BeanDefinition;
 public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory {
 
     @Override
-    public Object getBean(String name) {
+    public Object getBean(String name) throws BeansException {
+        return getBean(name, null);
+    }
+
+    @Override
+    public Object getBean(String name, Object... args) {
         // 对单例 Bean 对象的获取以及在获取不到时需要拿到 Bean 的定义做相应 Bean 实例化操作
         Object bean = getSingleton(name);
         if (bean != null) {
@@ -29,10 +34,10 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
         // 只定义了调用过程以及提供了抽象方法，由实现此抽象类的其他类做相应实现。
         BeanDefinition beanDefinition = getBeanDefinition(name);
-        return createBean(name, beanDefinition);
+        return createBean(name, beanDefinition, args);
     }
 
-    protected abstract Object createBean(String beanName, BeanDefinition beanDefinition) throws BeansException;
+    protected abstract Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args) throws BeansException;
 
     protected abstract BeanDefinition getBeanDefinition(String beanName) throws BeansException;
 

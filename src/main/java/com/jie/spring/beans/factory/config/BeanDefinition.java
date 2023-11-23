@@ -1,18 +1,10 @@
 package com.jie.spring.beans.factory.config;
 
-import com.jie.spring.beans.PropertyValues;
-
 import java.util.Objects;
 
 /**
  * BeanDefinition 实例保存bean信息，包括：
  * class 类型
- * 方法构造参数
- * bean 属性
- * bean 的scope
- * 。。。
- * <p>
- * 此处简化只包含class类型和bean属性
  */
 public class BeanDefinition {
 
@@ -21,18 +13,8 @@ public class BeanDefinition {
      */
     private Class beanClass;
 
-    /**
-     * bean class 属性值
-     */
-    private PropertyValues propertyValues;
-
     public BeanDefinition(Class beanClass) {
         this.beanClass = beanClass;
-    }
-
-    public BeanDefinition(Class beanClass, PropertyValues propertyValues) {
-        this.beanClass = beanClass;
-        this.propertyValues = propertyValues;
     }
 
     public Class getBeanClass() {
@@ -41,14 +23,6 @@ public class BeanDefinition {
 
     public void setBeanClass(Class beanClass) {
         this.beanClass = beanClass;
-    }
-
-    public PropertyValues getPropertyValues() {
-        return propertyValues;
-    }
-
-    public void setPropertyValues(PropertyValues propertyValues) {
-        this.propertyValues = propertyValues;
     }
 
     @Override
