@@ -3,7 +3,7 @@ package com.jie.spring.beans.factory;
 import com.jie.spring.beans.factory.config.BeanDefinition;
 import com.jie.spring.beans.factory.support.DefaultListableBeaFactory;
 import com.jie.spring.test.HelloService;
-import com.jie.spring.test.User;
+import com.jie.spring.test.UserService;
 import net.sf.cglib.proxy.Enhancer;
 import net.sf.cglib.proxy.NoOp;
 import org.junit.Test;
@@ -22,14 +22,14 @@ public class beanDefinitionAndBeanInstantiationTest {
     @Test
     public void testBeanFactory_succeed_paramStructure() {
         DefaultListableBeaFactory factory = new DefaultListableBeaFactory();
-        BeanDefinition beanDefinition = new BeanDefinition(User.class);
+        BeanDefinition beanDefinition = new BeanDefinition(UserService.class);
         String beanName = "user";
         factory.registerBeanDefinition(beanName, beanDefinition);
         // 获取有参构造函数实例化对象
-        User user = (User) factory.getBean(beanName, "jie");
+        UserService userService = (UserService) factory.getBean(beanName, "jie");
 
-        assertThat(user).isNotNull();
-        assertThat(user.getUserInfo()).isEqualTo("jie");
+        assertThat(userService).isNotNull();
+        assertThat(userService.getUserInfo()).isEqualTo("jie");
     }
 
     @Test

@@ -3,7 +3,7 @@ package com.jie.spring.beans.factory;
 import com.jie.spring.beans.factory.config.BeanDefinition;
 import com.jie.spring.beans.factory.support.DefaultListableBeaFactory;
 import com.jie.spring.test.HelloService;
-import com.jie.spring.test.User;
+import com.jie.spring.test.UserService;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,9 +39,9 @@ public class BeanDefinitionAndBeanDefinitionRegistryTest {
         // when
         Throwable thrown = catchThrowable(() -> {
             DefaultListableBeaFactory beaFactory = new DefaultListableBeaFactory();
-            BeanDefinition beanDefinition = new BeanDefinition(User.class);
+            BeanDefinition beanDefinition = new BeanDefinition(UserService.class);
             beaFactory.registerBeanDefinition("user", beanDefinition);
-            User user = (User) beaFactory.getBean("user");
+            UserService userService = (UserService) beaFactory.getBean("user");
         });
 
         // then
