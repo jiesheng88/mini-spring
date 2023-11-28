@@ -27,7 +27,7 @@ import java.io.InputStream;
  */
 public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
 
-    protected XmlBeanDefinitionReader(BeanDefinitionRegistry registry) {
+    public XmlBeanDefinitionReader(BeanDefinitionRegistry registry) {
         super(registry);
     }
 
@@ -50,6 +50,13 @@ public class XmlBeanDefinitionReader extends AbstractBeanDefinitionReader {
     public void loadBeanDefinitions(Resource... resources) throws BeansException {
         for (Resource resource : resources) {
             loadBeanDefinitions(resource);
+        }
+    }
+
+    @Override
+    public void loadBeanDefinitions(String[] locations) throws BeansException {
+        for (String location : locations) {
+            loadBeanDefinitions(location);
         }
     }
 

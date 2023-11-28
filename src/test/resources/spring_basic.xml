@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	         http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!--测试基础配置，无BeanFactoryPostProcessor、BeanPostProcessor-->
+
+    <bean id="userDao" class="com.jie.spring.test.UserDao"/>
+
+    <bean id="userService" class="com.jie.spring.test.UserService">
+        <property name="name" value="jie"/>
+        <property name="userDao" ref="userDao"/>
+        <property name="company" value="TP-LINK"/>
+        <property name="location" value="南京"/>
+    </bean>
+
+</beans>

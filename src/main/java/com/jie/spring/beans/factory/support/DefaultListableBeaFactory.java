@@ -55,4 +55,12 @@ public class DefaultListableBeaFactory extends AbstractAutowireCapableBeanFactor
     public String[] getBeanDefinitionNames() {
         return beanDefinitionMap.keySet().toArray(new String[0]);
     }
+
+    @Override
+    public void preInstantiateSingletons() throws BeansException {
+        beanDefinitionMap.keySet().forEach(this::getBean);
+//        for (String beanName : beanDefinitionMap.keySet()) {
+//            getBean(beanName);
+//        }
+    }
 }
