@@ -8,6 +8,10 @@ import java.util.Objects;
  * BeanDefinition 实例保存bean信息，包括：
  * class 类型
  * bean属性信息
+ * 初始化Bean的方法名
+ * 销毁Bean的方法名
+ *
+ * @author jie
  */
 public class BeanDefinition {
     /**
@@ -18,6 +22,14 @@ public class BeanDefinition {
      * bean属性信息，一个类中属性信息有可能很多，需要使用一个集合包装下
      */
     private PropertyValues propertyValues;
+    /**
+     * 在 spring.xml 中配置的初始化Bean的方法名
+     */
+    private String initMethodName;
+    /**
+     * 在 spring.xml 中配置的销毁Bean的方法名
+     */
+    private String destroyMethodName;
 
     public BeanDefinition(Class beanClass) {
         this.beanClass = beanClass;
@@ -43,6 +55,22 @@ public class BeanDefinition {
 
     public void setPropertyValues(PropertyValues propertyValues) {
         this.propertyValues = propertyValues;
+    }
+
+    public String getInitMethodName() {
+        return initMethodName;
+    }
+
+    public void setInitMethodName(String initMethodName) {
+        this.initMethodName = initMethodName;
+    }
+
+    public String getDestroyMethodName() {
+        return destroyMethodName;
+    }
+
+    public void setDestroyMethodName(String destroyMethodName) {
+        this.destroyMethodName = destroyMethodName;
     }
 
     @Override

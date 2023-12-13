@@ -6,7 +6,8 @@
 
     <!--测试基础配置，无BeanFactoryPostProcessor、BeanPostProcessor-->
 
-    <bean id="userDao" class="com.jie.spring.test.UserDao"/>
+    <bean id="userDao" class="com.jie.spring.test.UserDao"
+          init-method="initDataMethod" destroy-method="destroyDataMethod"/>
 
     <bean id="userService" class="com.jie.spring.test.UserService">
         <property name="name" value="jie"/>

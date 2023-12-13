@@ -1,12 +1,15 @@
 package com.jie.spring.test;
 
+import com.jie.spring.beans.factory.DisposableBean;
+import com.jie.spring.beans.factory.InitializingBean;
+
 import java.util.logging.Logger;
 
 /**
  * @author jie
  * @date 2023/11/23 21:44
  */
-public class UserService {
+public class UserService implements InitializingBean, DisposableBean {
     private final Logger log = Logger.getLogger(String.valueOf(UserService.class));
 
     private String name;
@@ -14,6 +17,16 @@ public class UserService {
     // 新增两个属性，是为了测试 BeanPostProcessor、BeanFactoryPostProcessor 两个接口对 Bean 属性信息扩展的作用。
     private String company;
     private String location;
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("执行：UserService.destroy");
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("执行：UserService.afterPropertiesSet");
+    }
 
     public String getName() {
         return name;
