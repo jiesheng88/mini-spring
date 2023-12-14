@@ -1,7 +1,14 @@
 package com.jie.spring.test;
 
+import com.jie.spring.beans.BeansException;
+import com.jie.spring.beans.factory.BeanClassLoaderAware;
+import com.jie.spring.beans.factory.BeanFactory;
+import com.jie.spring.beans.factory.BeanFactoryAware;
+import com.jie.spring.beans.factory.BeanNameAware;
 import com.jie.spring.beans.factory.DisposableBean;
 import com.jie.spring.beans.factory.InitializingBean;
+import com.jie.spring.context.ApplicationContext;
+import com.jie.spring.context.ApplicationContextAware;
 
 import java.util.logging.Logger;
 
@@ -9,8 +16,11 @@ import java.util.logging.Logger;
  * @author jie
  * @date 2023/11/23 21:44
  */
-public class UserService implements InitializingBean, DisposableBean {
+public class UserService implements BeanNameAware, BeanClassLoaderAware, BeanFactoryAware, ApplicationContextAware, InitializingBean, DisposableBean {
     private final Logger log = Logger.getLogger(String.valueOf(UserService.class));
+
+    private ApplicationContext applicationContext;
+    private BeanFactory beanFactory;
 
     private String name;
     private UserDao userDao;
@@ -26,6 +36,14 @@ public class UserService implements InitializingBean, DisposableBean {
     @Override
     public void afterPropertiesSet() throws Exception {
         System.out.println("执行：UserService.afterPropertiesSet");
+    }
+
+    public ApplicationContext getApplicationContext() {
+        return applicationContext;
+    }
+
+    public BeanFactory getBeanFactory() {
+        return beanFactory;
     }
 
     public String getName() {
@@ -65,5 +83,25 @@ public class UserService implements InitializingBean, DisposableBean {
         String userInfo = name + " 所在公司： " + company + ", 地点在：" + location + ", 年龄为：" + age;
         log.info("user info: " + userInfo);
         return userInfo;
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+        this.beanFactory = beanFactory;
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
+
+    @Override
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        System.out.println("ClassLoader: " + classLoader);
+    }
+
+    @Override
+    public void setBeanName(String beanName) {
+        System.out.println("BeanName: " + beanName);
     }
 }

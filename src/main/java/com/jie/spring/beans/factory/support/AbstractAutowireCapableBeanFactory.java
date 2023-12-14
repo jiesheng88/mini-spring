@@ -5,6 +5,10 @@ import cn.hutool.core.util.StrUtil;
 import com.jie.spring.beans.BeansException;
 import com.jie.spring.beans.PropertyValue;
 import com.jie.spring.beans.PropertyValues;
+import com.jie.spring.beans.factory.Aware;
+import com.jie.spring.beans.factory.BeanClassLoaderAware;
+import com.jie.spring.beans.factory.BeanFactoryAware;
+import com.jie.spring.beans.factory.BeanNameAware;
 import com.jie.spring.beans.factory.DisposableBean;
 import com.jie.spring.beans.factory.InitializingBean;
 import com.jie.spring.beans.factory.config.AutowireCapableBeanFactory;
@@ -18,6 +22,7 @@ import java.lang.reflect.Method;
 /**
  * 实例化Bean类
  * 实现继承的抽象类中的创建Bean方法
+ * 【增加】感知调用操作
  *
  * @author jie
  * @date 2023/11/21 23:18
@@ -112,6 +117,20 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
     }
 
     private Object initializeBean(String beanName, Object bean, BeanDefinition beanDefinition) {
+        // invokeAwareMethods，这样就能通知到已经实现了此接口的类
+        if (bean instanceof Aware) {
+            if (bean instanceof BeanFactoryAware) {
+                ((BeanFactoryAware) bean).setBeanFactory(this);
+            }
+            if (bean instanceof BeanClassLoaderAware) {
+                ((BeanClassLoaderAware) bean).setBeanClassLoader(getBeanClassLoader());
+            }
+            if (bean instanceof BeanNameAware) {
+                ((BeanNameAware) bean).setBeanName(beanName);
+            }
+        }
+
+
         // 1、执行 BeanPostProcessor#before 处理
         Object wrappedBean = applyBeanPostProcessorsBeforeInitialization(bean, beanName);
 

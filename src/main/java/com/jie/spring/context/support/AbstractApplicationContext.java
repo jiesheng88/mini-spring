@@ -19,6 +19,7 @@ import java.util.Map;
 public abstract class AbstractApplicationContext extends DefaultResourceLoader implements ConfigurableApplicationContext {
     /**
      * 定义refresh方法的实现过程
+     * refresh() 方法就是整个 Spring 容器的操作过程
      *
      * @throws BeansException
      */
@@ -29,6 +30,10 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader i
 
         // 2、获取BeanFactory
         ConfigurableListableBeanFactory beanFactory = getBeanFactory();
+
+        // 2.1 【增加-注册包装的 BeanPostProcessor】添加 ApplicationContextAwareProcessor，
+        // 让继承自 ApplicationContextAware 的 Bean 对象都能感知到所属的 ApplicationContext
+        beanFactory.addBeanPostProcessor(new ApplicationContextAwareProcessor(this));
 
         // 3、在Bean实例化之前，注册BeanFactoryPostProcessor
         // Invoke factory processors registered as beans in the context.
