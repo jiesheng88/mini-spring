@@ -10,10 +10,15 @@ import java.util.Objects;
  * bean属性信息
  * 初始化Bean的方法名
  * 销毁Bean的方法名
+ * Bean 的作用范围
  *
  * @author jie
  */
 public class BeanDefinition {
+    String SCOPE_SINGLETON = ConfigurableBeanFactory.SCOPE_SINGLETON;
+
+    String SCOPE_PROTOTYPE = ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+
     /**
      * bean class 类，把 Bean 的实例化操作放到容器中处理
      */
@@ -31,6 +36,13 @@ public class BeanDefinition {
      */
     private String destroyMethodName;
 
+    private String scope = SCOPE_SINGLETON;
+    /**
+     * 两个属性，用于把从 spring.xml 中解析到的 Bean 对象作用范围填充到属性中
+     */
+    private boolean singleton = true;
+    private boolean prototype = true;
+
     public BeanDefinition(Class beanClass) {
         this.beanClass = beanClass;
         this.propertyValues = new PropertyValues();
@@ -39,6 +51,33 @@ public class BeanDefinition {
     public BeanDefinition(Class beanClass, PropertyValues propertyValues) {
         this.beanClass = beanClass;
         this.propertyValues = propertyValues != null ? propertyValues : new PropertyValues();
+    }
+
+    public boolean isSingleton() {
+        return singleton;
+    }
+
+    public void setSingleton(boolean singleton) {
+        this.singleton = singleton;
+    }
+
+    public boolean isPrototype() {
+        return prototype;
+    }
+
+    public void setPrototype(boolean prototype) {
+        this.prototype = prototype;
+    }
+
+    // 在 XML 注册 Bean 定义时，通过scope字段来判断是单例还是原型
+    public void setScope(String scope) {
+        this.scope = scope;
+        this.singleton = SCOPE_SINGLETON.equals(scope);
+        this.prototype = SCOPE_PROTOTYPE.equals(scope);
+    }
+
+    public String getScope() {
+        return scope;
     }
 
     public Class getBeanClass() {

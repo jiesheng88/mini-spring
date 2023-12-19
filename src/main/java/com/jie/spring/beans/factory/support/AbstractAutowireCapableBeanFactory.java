@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
  * 实例化Bean类
  * 实现继承的抽象类中的创建Bean方法
  * 【增加】感知调用操作
+ * 【增加】创建和修改对象时判断单例和原型模式
  *
  * @author jie
  * @date 2023/11/21 23:18
@@ -52,12 +53,28 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         // 增加注册 实现了 DisposableBean 接口的 Bean 对象
         registerDisposableBeanIfNecessary(beanName, bean, beanDefinition);
 
-        // 存放到单例对象的缓存中去
-        addSingleton(beanName, bean);
+        // 判断是否是单例
+        if (beanDefinition.isSingleton()) {
+            // 存放到单例对象的缓存中去
+            addSingleton(beanName, bean);
+        }
         return bean;
     }
 
+    /**
+     * 单例模式和原型模式的区别就在于是否存放到内存中，如果是原型模式那么就不会存放到内存中，每次获取都重新创建对象，
+     * 另外非 Singleton 类型的 Bean 不需要执行销毁方法。
+     *
+     * @param beanName
+     * @param bean
+     * @param beanDefinition
+     */
     private void registerDisposableBeanIfNecessary(String beanName, Object bean, BeanDefinition beanDefinition) {
+        // 非单例类型的 Bean 不执行销毁方法
+        if (!beanDefinition.isSingleton()) {
+            return;
+        }
+
         if (bean instanceof DisposableBean || StrUtil.isNotEmpty(beanDefinition.getDestroyMethodName())) {
             // 统一交给适配器来做统一处理
             // 销毁方法的注册交给父类 DefaultSingletonBeanRegistry 来处理

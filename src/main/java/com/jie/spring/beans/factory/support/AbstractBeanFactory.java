@@ -1,6 +1,7 @@
 package com.jie.spring.beans.factory.support;
 
 import com.jie.spring.beans.BeansException;
+import com.jie.spring.beans.factory.FactoryBean;
 import com.jie.spring.beans.factory.config.BeanDefinition;
 import com.jie.spring.beans.factory.config.BeanPostProcessor;
 import com.jie.spring.beans.factory.config.ConfigurableBeanFactory;
@@ -18,11 +19,13 @@ import java.util.List;
  * 你只需要关心属于你的内容，不是你的内容，不要参与。
  * <p>
  * AbstractBeanFactory：已经具备了单例Bean的注册功能和获取功能。
+ * <p>
+ * 【新增】拓展创建对象逻辑：扩展出创建 FactoryBean 对象的能力
  *
  * @author jie
  * @date 2023/11/21 22:51
  */
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory {
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
     /**
      * BeanPostProcessors to apply in createBean
      * 创建Bean时，使用到，用于拓展 Bean
@@ -51,14 +54,29 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
 
     protected <T> T doGetBean(String name, Object[] args) {
         // 对单例 Bean 对象的获取以及在获取不到时需要拿到 Bean 的定义做相应 Bean 实例化操作
-        Object bean = getSingleton(name);
-        if (bean != null) {
-            return (T) bean;
+        Object sharedInstance = getSingleton(name);
+        if (sharedInstance != null) {
+            // 如果是 FactoryBean，则需要调用 FactoryBean#getObject
+            return (T) getObjectForBeanInstance(sharedInstance, name);
         }
 
         // 只定义了调用过程以及提供了抽象方法，由实现此抽象类的其他类做相应实现。
         BeanDefinition beanDefinition = getBeanDefinition(name);
-        return (T) createBean(name, beanDefinition, args);
+        Object bean = createBean(name, beanDefinition, args);
+        return (T) getObjectForBeanInstance(bean, name);
+    }
+
+    private Object getObjectForBeanInstance(Object beanInstance, String beanName) {
+        if (!(beanInstance instanceof FactoryBean)) {
+            return beanInstance;
+        }
+
+        Object object = getCacheObjectFormFactoryBean(beanName);
+        if (object == null) {
+            FactoryBean<?> factoryBean = (FactoryBean<?>) beanInstance;
+            object = getObjectFromFactoryBean(factoryBean, beanName);
+        }
+        return object;
     }
 
     protected abstract Object createBean(String beanName, BeanDefinition beanDefinition, Object[] args) throws BeansException;

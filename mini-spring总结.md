@@ -58,3 +58,19 @@ BeanFactory、ApplicationContext
 进行判断和调用了。
 
 ![图 9-3](mini-spring总结.assets/spring-9-03.png)
+
+## Day09 Bean对象作用域以及FactoryBean的实现和使用
+
+在集合 Spring 框架下，我们使用的 MyBatis 框架中，它的核心作用是可以满足用户不需要实现 Dao 接口类，就可以通过 xml
+或者注解配置的方式完成对数据库执行 CRUD 操作，那么在实现这样的 ORM 框架中，是怎么把一个数据库操作的 Bean 对象交给 Spring
+管理的呢。
+
+因为我们在使用 Spring、MyBatis 框架的时候都可以知道，并没有手动的去创建任何操作数据库的 Bean
+对象，有的仅仅是一个接口定义，而这个接口定义竟然可以被注入到其他需要使用 Dao
+的属性中去了，那么这一过程最核心待解决的问题，就是需要完成把复杂且以代理方式动态变化的对象，注册到 Spring
+容器中。而为了满足这样的一个扩展组件开发的需求，就需要我们在现有手写的 Spring 框架中，添加这一能力。
+
+![img](mini-spring总结.assets/spring-10-01.png)
+
+
+
