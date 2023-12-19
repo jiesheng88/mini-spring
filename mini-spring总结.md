@@ -72,5 +72,18 @@ BeanFactory、ApplicationContext
 
 ![img](mini-spring总结.assets/spring-10-01.png)
 
+## Day10 基于观察者实现，容器事件和事件监听器
 
+在功能实现上我们需要定义出事件类、事件监听、事件发布，而这些类的功能需要结合到 Spring 的
+AbstractApplicationContext#refresh()，以便于处理事件初始化和注册事件监听器的操作。整体设计结构如下图：
+
+![img](mini-spring总结.assets/spring-11-01.png)
+
+- 在整个功能实现过程中，仍然需要在面向用户的应用上下文 `AbstractApplicationContext`
+  中添加相关事件内容，包括：初始化事件发布者、注册事件监听器、发布容器刷新完成事件。
+- 使用观察者模式定义事件类、监听类、发布类，同时还需要完成一个广播器的功能，接收到事件推送时进行分析处理符合监听事件接受者感兴趣的事件，也就是使用
+  isAssignableFrom 进行判断。
+- isAssignableFrom 和 instanceof 相似，不过 isAssignableFrom
+  是用来判断子类和父类的关系的，或者接口的实现类和接口的关系的，默认所有的类的终极父类都是Object。如果A.isAssignableFrom(B)
+  结果是true，证明B可以转换成为A,也就是A可以由B转换而来。
 
