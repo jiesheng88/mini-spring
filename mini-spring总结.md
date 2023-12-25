@@ -87,3 +87,65 @@ AbstractApplicationContext#refresh()，以便于处理事件初始化和注册�
   是用来判断子类和父类的关系的，或者接口的实现类和接口的关系的，默认所有的类的终极父类都是Object。如果A.isAssignableFrom(B)
   结果是true，证明B可以转换成为A,也就是A可以由B转换而来。
 
+## Day11 基于JDK和Cglib动态代理，实现AOP核心功能
+
+AOP 的核心技术实现主要是动态代理的使用。
+
+在把 AOP 整个切面设计融合到 Spring
+前，我们需要解决两个问题，包括：`如何给符合规则的方法做代理`，`以及做完代理方法的案例后，把类的职责拆分出来`
+。而这两个功能点的实现，都是以切面的思想进行设计和开发。
+
+![img](mini-spring总结.assets/spring-12-01.png)
+
+我们需要先来实现一个可以代理方法的 Proxy，其实代理方法主要是使用到方法拦截器类处理方法的调用 `MethodInterceptor#invoke`
+，而不是直接使用 invoke 方法中的入参 Method method 进行 `method.invoke(targetObj, args)` 这块是整个使用时的差异。
+
+AOP 切点表达式和使用以及基于 JDK 和 CGLIB 的动态代理类关系。
+
+![图 12-2](mini-spring总结.assets/spring-12-02.png)
+
+1、MethodInvocation（拦截器的调用）
+
+代理对象创建后，最终的拦截工作都是交给了MethodInvocation。JDK交给了`ReflectiveMethodInvocation`
+，而CGLIB交给`CglibMethodInvocation`。
+
+![img](mini-spring总结.assets/1374196-20211116031250125-1444247266.webp)
+
+```java
+//此接口表示运行时的连接点（AOP术语）
+public interface Joinpoint {
+    //执行此拦截点，并进入下一个连接点
+    Object proceed() throws Throwable;
+    //保存当前连接点静态对象，这里一般指的是target
+    Object getThis();
+    //返回此静态连接点，一般就为当前的Method
+    AccessibleObject getStaticPart();
+}
+
+public interface Invocation extends Joinpoint {
+    //获取参数，例如方法的参数
+    Object[] getArguments();
+}
+
+// 方法调用时，对这部分进行描述
+public interface MethodInvocation extends Invocation {
+    // 返回正在被调用得方法，返回的是当前Method对象。
+    // 此时，效果同父类的AccessibleObject getStaticPart() 这个方法
+    Method getMethod();
+}
+```
+
+2、MethodInterceptor
+
+MethodInterceptor 是提供给用户自定义方法拦截器的接口，需要用户自定义实现 invoke() 方法。然后通过反射读取。
+
+
+
+
+
+
+
+
+
+
+

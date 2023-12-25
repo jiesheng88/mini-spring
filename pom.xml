@@ -40,6 +40,18 @@
             <version>5.5.0</version>
         </dependency>
 
+        <!-- aop pointcut -->
+        <dependency>
+            <groupId>aopalliance</groupId>
+            <artifactId>aopalliance</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>1.9.19</version>
+        </dependency>
+
 
     </dependencies>
 
