@@ -139,13 +139,58 @@ public interface MethodInvocation extends Invocation {
 
 MethodInterceptor 是提供给用户自定义方法拦截器的接口，需要用户自定义实现 invoke() 方法。然后通过反射读取。
 
+## Day12 把AOP动态代理，融入到Bean的生命周期
 
+## Day13 通过注解配置和包自动扫描的方式完成Bean对象的注册
 
+为了可以简化 Bean 对象的配置，让整个 Bean
+对象的注册都是自动扫描的，那么基本需要的元素包括：扫描路径入口、XML解析扫描信息、给需要扫描的Bean对象做注解标记、扫描Class对象摘取Bean注册的基本信息，组装注册信息、注册成Bean对象。那么在这些条件元素的支撑下，就可以实现出通过自定义注解和配置扫描路径的情况下，完成
+Bean 对象的注册。
 
+![img](mini-spring总结.assets/spring-14-01.png)
 
+结合bean的生命周期，包扫描只不过是扫描特定注解的类，提取类的相关信息组装成BeanDefinition注册到容器中。
 
+在XmlBeanDefinitionReader中解析`<context:component-scan />`
+标签，扫描类组装BeanDefinition然后注册到容器中的操作在ClassPathBeanDefinitionScanner#doScan中实现。
 
+- 自动扫描注册主要是扫描添加了自定义注解的类，在xml加载过程中提取类的信息，组装 BeanDefinition 注册到 Spring 容器中。
+- 所以我们会用到 `<context:component-scan />` 配置包路径并在 XmlBeanDefinitionReader 解析并做相应的处理。
+  *这里的处理会包括对类的扫描、获取注解信息等*
+- 最后还包括了一部分关于 `BeanFactoryPostProcessor` 的使用，因为我们需要完成对占位符配置信息的加载，所以需要使用到
+  BeanFactoryPostProcessor 在所有的 BeanDefinition 加载完成后，实例化 Bean 对象之前，修改 BeanDefinition 的属性信息。
+  *这一部分的实现也为后续处理关于占位符配置到注解上做准备*
 
+![图 14-2](mini-spring总结.assets/spring-14-02.png)
 
+- 整个类的关系结构来看，其实涉及的内容并不多，主要包括的就是 xml 解析类 XmlBeanDefinitionReader 对
+  ClassPathBeanDefinitionScanner#doScan 的使用。
+- 在 doScan 方法中处理所有指定路径下添加了注解的类，拆解出类的信息：名称、作用范围等，进行创建 BeanDefinition 好用于 Bean
+  对象的注册操作。
+- PropertyPlaceholderConfigurer 目前看上去像一块单独的内容，后续会把这块的内容与自动加载 Bean
+  对象进行整合，也就是可以在注解上使用占位符配置一些在配置文件里的属性信息。
 
+## 拓展资料
+
+### 1 BeanFactory 与 FactoryBean
+
+#### 1.1 BeanFactory
+
+BeanFactory 是所有 Spring Bean 的容器根接口，给 Spring 的容器定义一套规范。
+
+可以说 **BeanFactory 就是 IOC 容器，是保存 Bean 的，其本质是 Factory**。
+
+#### 1.2 FctoryBean
+
+FactoryBean 是一个能生产对象的工厂 Bean，将 Bean 创建过程交给开发者。是一种 Bean 创建的方式，用于复杂 Bean 创建。
+
+**本质是 Bean，最终还是要交给 BeanFactory 来管理**。
+
+> FactoryBean 在 IOC 容器的基础上，给 Bean 的实现加上了一个简单工厂模式和装饰模式。
+>
+
+> FactoryBean 是一个接口，当在 IOC 容器中的 Bean 实现了 FactoryBean 后，通过 getBean() 获取的 Bean 对象并不是 FactoryBean
+> 的实现类对象，而是这个实现类中的 getObject() 方法返回的对象。要想获取 FactoryBean 的实现类，就要 getBean(&beanName)，在
+> BeanName 前面加上 &
+>
 

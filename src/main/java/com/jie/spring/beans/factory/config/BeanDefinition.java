@@ -80,7 +80,7 @@ public class BeanDefinition {
         return scope;
     }
 
-    public Class getBeanClass() {
+    public Class<?> getBeanClass() {
         return beanClass;
     }
 
